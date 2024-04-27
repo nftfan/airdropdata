@@ -34,7 +34,7 @@
     }
     button {
         padding: 10px 20px;
-        background-color: #4caf50; /* Green button */
+        background-color: #2081e2; /* Green button */
         color: #fff; /* Light text */
         border: none;
         border-radius: 5px;
@@ -72,6 +72,19 @@
         margin-top: 10px;
         text-align: center;
     }
+	.total-entries-container {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.total-entries-container span {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #4caf50; /* Green background */
+    color: #fff; /* Light text */
+    border-radius: 5px;
+}
+
 </style>
 </head>
 <body>
@@ -79,8 +92,11 @@
 <div class="container">
     <h2 style="text-align: center;">NFTFANS TOKEN AIRDROP</h2>
     <textarea id="commentText" placeholder="Paste your wallet here..."></textarea>
-    <button onclick="postComment()">Post Wallet</button>
-    <div class="total-entries" id="totalEntries"></div>
+    <button onclick="postComment()">Post</button>
+    <div class="total-entries-container">
+     <span id="totalEntries"></span>
+</div>
+
     <div class="error" id="errorMessage"></div>
     
     <div class="comments" id="commentsSection">
