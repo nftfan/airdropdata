@@ -57,8 +57,8 @@
         position: relative;
     }
     .comment svg {
-        width: 100px;
-        height: 100px;
+        width: 25px;
+        height: 25px;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
     }
@@ -158,32 +158,48 @@
         });
     }
     
-    function displayComments(comments) {
-        var commentsSection = document.getElementById("commentsSection");
-        commentsSection.innerHTML = ""; // Clear existing comments
+   function displayComments(comments) {
+    var commentsSection = document.getElementById("commentsSection");
+    commentsSection.innerHTML = ""; // Clear existing comments
+    
+    comments.forEach(function(comment) {
+        var commentNode = document.createElement("div");
+        commentNode.className = "comment";
         
-        comments.forEach(function(comment) {
-            var commentNode = document.createElement("div");
-            commentNode.className = "comment";
-            
-            // Create SVG element
-            var imageId = Math.floor(Math.random() * 1000); // Random image ID
-            var svgSrc = `https://api.dicebear.com/7.x/pixel-art/svg?seed=${imageId}`;
-            var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-            svgElement.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
-            svgElement.innerHTML = `<image xlink:href="${svgSrc}" width="100" height="100" />`;
-            commentNode.appendChild(svgElement);
-            
-            // Create text element
-            var textNode = document.createElement("div");
-            textNode.className = "comment-text";
-            textNode.textContent = comment.text;
-            commentNode.appendChild(textNode);
+        // Create SVG element for avatar
+        var imageId = Math.floor(Math.random() * 1000); // Random image ID
+        var svgSrc = `https://api.dicebear.com/7.x/pixel-art/svg?seed=${imageId}`;
+        var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        svgElement.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+        svgElement.innerHTML = `<image xlink:href="${svgSrc}" width="25" height="25" />`;
+        commentNode.appendChild(svgElement);
+        
+        // Check if the comment text contains a URL
+        var commentText = comment.text;
+        var urlRegex = /(https?:\/\/[^\s]+)/g;
+        var urlMatches = commentText.match(urlRegex);
+        if (urlMatches && urlMatches.length > 0) {
+            // If a URL is present, create and append the image element
+            var imageUrl = urlMatches[0]; // Assuming only one URL is present
+            var additionalImage = document.createElement("img");
+            additionalImage.src = imageUrl;
+            additionalImage.width = 100;
+            additionalImage.height = 100;
+            commentNode.appendChild(additionalImage);
+        }
+        
+        // Create text element
+        var textNode = document.createElement("div");
+        textNode.className = "comment-text";
+        textNode.textContent = commentText;
+        commentNode.appendChild(textNode);
 
-            commentsSection.appendChild(commentNode);
-        });
-    }
+        commentsSection.appendChild(commentNode);
+    });
+}
+
+
     
     function displayError(message) {
         var errorMessage = document.getElementById("errorMessage");
