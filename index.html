@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NFTFANS TOKEN AIRDROP</title>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1002.0.min.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #1e1e1e; /* Dark background */
+        color: #fff; /* Light text */
+    }
+    .container {
+        width: 80%;
+		max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #333; /* Dark container background */
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Shadow effect */
+    }
+    textarea {
+        width: calc(100% - 22px); /* Adjusting for padding */
+        height: 100px;
+        padding: 10px;
+        border: 1px solid #555; /* Dark border */
+        border-radius: 5px;
+        margin-bottom: 10px;
+        background-color: #222; /* Dark textarea background */
+        color: #fff; /* Light text */
+    }
+    button {
+        padding: 10px 20px;
+        background-color: #4caf50; /* Green button */
+        color: #fff; /* Light text */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Smooth transition */
+    }
+    button:hover {
+        background-color: #45a049; /* Darker green on hover */
+    }
+    .comments {
+        margin-top: 20px;
+    }
+    .comment {
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        font-size: 8px; /* Adjust font size */
+        color: #ffffff;
+        position: relative;
+    }
+    .comment svg {
+        width: 100%;
+        height: auto;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+    .comment-text {
+        padding-top: 10px;
+    }
+    .error {
+        color: red;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2 style="text-align: center;">NFTFANS TOKEN AIRDROP</h2>
+    <textarea id="commentText" placeholder="Paste your wallet here..."></textarea>
+    <button onclick="postComment()">Post Wallet</button>
+    <div class="error" id="errorMessage"></div>
+    
+    <div class="comments" id="commentsSection">
+        <!-- Comments will be displayed here -->
+    </div>
+</div>
+
+<script>
+    // Configure AWS SDK
+    AWS.config.update({
+        region: 'eu-north-1',
+        credentials: new AWS.Credentials('AKIAVRUVVVUMRJE42HHR', 'zYW7Ly036krP3MOi/ioMlns1b4FnTEG7mkk+f8S8')
+    });
+    
+    var dynamodb = new AWS.DynamoDB.DocumentClient();
+    var tableName = 'bigfan'; // Updated table name
+    
+    // Load comments from DynamoDB when the page loads
+    window.onload = function() {
+        loadComments();
+    };
+    
+    function postComment() {
+        var commentText = document.getElementById("commentText").value;
+        if(commentText.trim() === "") {
+            displayError("Please enter a comment!");
+            return;
+        }
+        
+        var params = {
+            TableName: tableName,
+            Item: {
+                bigfan: Date.now().toString(), // Primary key attribute
+                commentId: 'comment_' + Date.now().toString(), // Unique comment ID
+                text: commentText
+            }
+        };
+        
+        dynamodb.put(params, function(err, data) {
+            if (err) {
+                displayError("Error saving comment to DynamoDB: " + err.message);
+            } else {
+                clearError();
+                console.log("Successfully saved comment to DynamoDB", data);
+                loadComments(); // Reload comments after saving
+            }
+        });
+        
+        // Clear the textarea after posting the comment
+        document.getElementById("commentText").value = "";
+
+        // Add animation to button
+        var button = document.querySelector('button');
+        button.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            button.style.transform = 'scale(1)';
+        }, 100);
+    }
+    
+    function loadComments() {
+        var params = {
+            TableName: tableName
+        };
+        
+        dynamodb.scan(params, function(err, data) {
+            if (err) {
+                displayError("Error loading comments from DynamoDB: " + err.message);
+            } else {
+                clearError();
+                console.log("Successfully loaded comments from DynamoDB", data);
+                displayComments(data.Items);
+            }
+        });
+    }
+    
+    function displayComments(comments) {
+        var commentsSection = document.getElementById("commentsSection");
+        commentsSection.innerHTML = ""; // Clear existing comments
+        
+        comments.forEach(function(comment) {
+            var commentNode = document.createElement("div");
+            commentNode.className = "comment";
+            
+            // Create SVG element
+            var imageId = Math.floor(Math.random() * 1000); // Random image ID
+            var svgSrc = `https://api.dicebear.com/7.x/pixel-art/svg?seed=${imageId}`;
+            var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+            svgElement.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+            svgElement.innerHTML = `<image xlink:href="${svgSrc}" width="300" height="200" />`;
+            commentNode.appendChild(svgElement);
+            
+            // Create text element
+            var textNode = document.createElement("div");
+            textNode.className = "comment-text";
+            textNode.textContent = comment.text;
+            commentNode.appendChild(textNode);
+
+            commentsSection.appendChild(commentNode);
+        });
+    }
+    
+    function displayError(message) {
+        var errorMessage = document.getElementById("errorMessage");
+        errorMessage.textContent = message;
+    }
+    
+    function clearError() {
+        var errorMessage = document.getElementById("errorMessage");
+        errorMessage.textContent = "";
+    }
+</script>
+
+</body>
+</html>
