@@ -164,8 +164,10 @@
     var commentsSection = document.getElementById("commentsSection");
     commentsSection.innerHTML = ""; // Clear existing comments
     
-    // Reverse the order of the comments array to display latest comments first
-    comments.reverse();
+    // Sort comments by date in descending order (latest first)
+    comments.sort(function(a, b) {
+        return new Date(b.dateTime) - new Date(a.dateTime);
+    });
     
     comments.forEach(function(comment) {
         var commentNode = document.createElement("div");
@@ -208,6 +210,7 @@
         commentsSection.appendChild(commentNode);
     });
 }
+
 
 
 
