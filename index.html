@@ -57,8 +57,8 @@
         position: relative;
     }
     .comment svg {
-        width: 100%;
-        height: auto;
+        width: 500px;
+        height: 500px;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
     }
@@ -172,7 +172,7 @@
             var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
             svgElement.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
-            svgElement.innerHTML = `<image xlink:href="${svgSrc}" width="300" height="200" />`;
+            svgElement.innerHTML = `<image xlink:href="${svgSrc}" width="500" height="500" />`;
             commentNode.appendChild(svgElement);
             
             // Create text element
