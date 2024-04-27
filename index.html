@@ -111,13 +111,15 @@
         }
         
         var params = {
-            TableName: tableName,
-            Item: {
-                bigfan: Date.now().toString(), // Primary key attribute
-                commentId: 'comment_' + Date.now().toString(), // Unique comment ID
-                text: commentText
-            }
-        };
+    TableName: tableName,
+    Item: {
+        bigfan: Date.now().toString(), // Primary key attribute
+        commentId: 'comment_' + Date.now().toString(), // Unique comment ID
+        text: commentText,
+        dateTime: new Date().toISOString() // Date and time attribute
+    }
+};
+
         
         dynamodb.put(params, function(err, data) {
             if (err) {
@@ -158,13 +160,21 @@
         });
     }
     
-   function displayComments(comments) {
+  function displayComments(comments) {
     var commentsSection = document.getElementById("commentsSection");
     commentsSection.innerHTML = ""; // Clear existing comments
+    
+    // Reverse the order of the comments array to display latest comments first
+    comments.reverse();
     
     comments.forEach(function(comment) {
         var commentNode = document.createElement("div");
         commentNode.className = "comment";
+        
+        // Display date and time
+        var dateTimeNode = document.createElement("div");
+        dateTimeNode.textContent = new Date(comment.dateTime).toLocaleString();
+        commentNode.appendChild(dateTimeNode);
         
         // Create SVG element for avatar
         var imageId = Math.floor(Math.random() * 1000); // Random image ID
@@ -198,6 +208,8 @@
         commentsSection.appendChild(commentNode);
     });
 }
+
+
 
 
     
